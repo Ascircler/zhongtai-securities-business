@@ -2,7 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>中泰证券业务全景图</title>
     <style>
         * {
@@ -29,15 +31,26 @@
             min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
+            -webkit-text-size-adjust: 100%; /* 防止iOS字体大小调整 */
+            -webkit-font-smoothing: antialiased; /* 字体平滑 */
         }
         
         .container {
             max-width: 1400px;
+            width: 100%;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+        }
+        
+        /* 移动端容器调整 */
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
         }
         
         /* 头部设计 */
@@ -92,6 +105,14 @@
             gap: 10px;
             overflow-x: auto;
             border-bottom: 2px solid var(--border);
+            -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+            scrollbar-width: none; /* Firefox 隐藏滚动条 */
+            -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
+        }
+        
+        /* 隐藏滚动条 - Webkit */
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
         }
         
         .nav-tab {
@@ -108,6 +129,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+            touch-action: manipulation; /* 优化触摸响应，防止双击缩放 */
+            user-select: none; /* 禁止选中文字 */
+            position: relative; /* 为active状态准备 */
         }
         
         .nav-tab:hover {
@@ -116,10 +141,22 @@
             transform: translateY(-2px);
         }
         
+        /* 移动端点击效果 */
+        .nav-tab:active {
+            transform: scale(0.95);
+            background: #e5e7eb;
+        }
+        
         .nav-tab.active {
             background: var(--primary);
             color: white;
             box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+            font-weight: 600;
+        }
+        
+        .nav-tab.active:active {
+            transform: scale(0.95);
+            background: var(--primary);
         }
         
         .nav-tab i {
@@ -340,11 +377,18 @@
         }
         
         /* 股票投顾服务表格 */
+        .stock-service-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 20px;
+        }
+        
         .stock-service-table {
             width: 100%;
+            min-width: 600px; /* 确保表格有最小宽度 */
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 20px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -383,26 +427,132 @@
         
         /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
             .header h1 {
                 font-size: 1.8rem;
             }
             
             .nav-tabs {
+                padding: 10px 5px;
+                gap: 8px;
+                /* 确保横向滚动 */
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
             
+            .nav-tab {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                min-width: auto;
+                flex-shrink: 0; /* 防止按钮被压缩 */
+                min-height: 44px; /* iOS推荐的最小触摸目标尺寸 */
+            }
+            
+            .content-area {
+                padding: 20px 15px;
+            }
+            
             .business-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* 表格响应式处理 */
+            .stock-service-table-wrapper {
+                font-size: 0.85rem;
+                margin-top: 20px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 12px;
+            }
+            
+            /* 隐藏表格滚动条 */
+            .stock-service-table-wrapper::-webkit-scrollbar {
+                height: 5px;
+            }
+            
+            .stock-service-table-wrapper::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+            
+            .stock-service-table-wrapper::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 3px;
+            }
+            
+            .stock-service-table {
+                min-width: 600px;
+            }
+            
+            .stock-service-table th,
+            .stock-service-table td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+        }
+        
+        /* 移动设备特殊优化 */
+        .is-mobile .nav-tab {
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        
+        .is-mobile .business-card {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .is-mobile .business-card:active {
+            transform: scale(0.98);
+        }
+        
+        /* 横屏模式优化 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .company-info {
+                display: none;
+            }
         }
         
         /* 高亮卡片 */
+        .highlight-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .highlight-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .highlight-card p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+    </style>
         .highlight-card {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -436,22 +586,22 @@
         
         <!-- 导航标签 -->
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('fund-advisory')">
+            <button class="nav-tab active" onclick="switchTab(event, 'fund-advisory')">
                 💼 基金投顾
             </button>
-            <button class="nav-tab" onclick="switchTab('stock-advisory')">
+            <button class="nav-tab" onclick="switchTab(event, 'stock-advisory')">
                 📈 股票投顾
             </button>
-            <button class="nav-tab" onclick="switchTab('public-fund')">
+            <button class="nav-tab" onclick="switchTab(event, 'public-fund')">
                 🏢 公募基金
             </button>
-            <button class="nav-tab" onclick="switchTab('private-fund')">
+            <button class="nav-tab" onclick="switchTab(event, 'private-fund')">
                 🔒 私募基金
             </button>
-            <button class="nav-tab" onclick="switchTab('family-trust')">
+            <button class="nav-tab" onclick="switchTab(event, 'family-trust')">
                 🏡 家族信托
             </button>
-            <button class="nav-tab" onclick="switchTab('algo-trading')">
+            <button class="nav-tab" onclick="switchTab(event, 'algo-trading')">
                 🤖 算法交易
             </button>
         </div>
@@ -615,64 +765,66 @@
                     <p>专业投顾团队，提供股票池、交易策略、操盘指导等全方位服务</p>
                 </div>
                 
-                <table class="stock-service-table">
-                    <thead>
-                        <tr>
-                            <th>产品类型</th>
-                            <th>产品本质</th>
-                            <th>短信内容</th>
-                            <th>收费方式</th>
-                            <th>服务内容</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center;">
-                                    <span class="service-icon">🎯</span>
-                                    <strong>涨泰宝</strong>
-                                </div>
-                            </td>
-                            <td>股票池</td>
-                            <td>
-                                产品+交易方向+股票+调合理由<br>
-                                交易区间+参考止损价位
-                            </td>
-                            <td>后收费</td>
-                            <td>股票+操盘策略</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center;">
-                                    <span class="service-icon">🎁</span>
-                                    <strong>锦囊</strong>
-                                </div>
-                            </td>
-                            <td>股票池</td>
-                            <td>
-                                产品+交易方向+股票+调合理由<br>
-                                参考价位+调合理由
-                            </td>
-                            <td>现金+并借</td>
-                            <td>股票+操盘策略+战法教程</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center;">
-                                    <span class="service-icon">📦</span>
-                                    <strong>组合</strong>
-                                </div>
-                            </td>
-                            <td>模拟盘</td>
-                            <td>
-                                产品+交易方向+股票+调合理由<br>
-                                仓位占比+参考价位
-                            </td>
-                            <td>现金+并借</td>
-                            <td>股票+操盘日志</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="stock-service-table-wrapper">
+                    <table class="stock-service-table">
+                        <thead>
+                            <tr>
+                                <th>产品类型</th>
+                                <th>产品本质</th>
+                                <th>短信内容</th>
+                                <th>收费方式</th>
+                                <th>服务内容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="service-icon">🎯</span>
+                                        <strong>涨泰宝</strong>
+                                    </div>
+                                </td>
+                                <td>股票池</td>
+                                <td>
+                                    产品+交易方向+股票+调合理由<br>
+                                    交易区间+参考止损价位
+                                </td>
+                                <td>后收费</td>
+                                <td>股票+操盘策略</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="service-icon">🎁</span>
+                                        <strong>锦囊</strong>
+                                    </div>
+                                </td>
+                                <td>股票池</td>
+                                <td>
+                                    产品+交易方向+股票+调合理由<br>
+                                    参考价位+调合理由
+                                </td>
+                                <td>现金+并借</td>
+                                <td>股票+操盘策略+战法教程</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="service-icon">📦</span>
+                                        <strong>组合</strong>
+                                    </div>
+                                </td>
+                                <td>模拟盘</td>
+                                <td>
+                                    产品+交易方向+股票+调合理由<br>
+                                    仓位占比+参考价位
+                                </td>
+                                <td>现金+并借</td>
+                                <td>股票+操盘日志</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 
                 <!-- 涨泰宝产品推荐 -->
                 <div style="margin-top: 30px;">
@@ -811,16 +963,16 @@
             <div id="public-fund" class="tab-content">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-value">58</div>
-                        <div class="stat-label">公募基金产品</div>
+                        <div class="stat-value">50+</div>
+                        <div class="stat-label">基金产品</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value">1700亿</div>
                         <div class="stat-label">公募资管规模</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">16</div>
-                        <div class="stat-label">基金经理团队</div>
+                        <div class="stat-value">ETF</div>
+                        <div class="stat-label">热门产品代销</div>
                     </div>
                 </div>
                 
@@ -837,12 +989,6 @@
                                 <div class="product-name">中泰星元价值优选（006567）</div>
                                 <div class="product-desc">
                                     基金经理：姜诚 | 价值投资策略，专注优质成长股
-                                </div>
-                            </div>
-                            <div class="product-item">
-                                <div class="product-name">中泰玉衡价值优选（006624）</div>
-                                <div class="product-desc">
-                                    基金经理：姜诚 | 深度价值挖掘，长期持有策略
                                 </div>
                             </div>
                             <div class="product-item">
@@ -874,62 +1020,51 @@
                                     中盘股指数增强，多因子选股模型
                                 </div>
                             </div>
-                            <div class="product-item">
-                                <div class="product-name">中泰中证1000指数增强（012210）</div>
-                                <div class="product-desc">
-                                    小盘股指数增强，捕捉成长机会
-                                </div>
-                            </div>
                         </div>
                     </div>
                     
                     <div class="business-card">
                         <div class="business-card-header">
                             <div class="business-card-title">
-                                💰 固定收益基金
+                                💹 热门ETF产品
                             </div>
-                            <div class="business-card-subtitle">稳健理财选择</div>
+                            <div class="business-card-subtitle">主流ETF代销服务</div>
                         </div>
                         <div class="business-card-body">
                             <div class="product-item">
-                                <div class="product-name">中泰纯债债券（008868）</div>
+                                <div class="product-name">沪深300ETF（510300）</div>
                                 <div class="product-desc">
-                                    纯债投资，追求稳定票息收益
+                                    跟踪沪深300指数，大盘蓝筹股代表
                                 </div>
                             </div>
                             <div class="product-item">
-                                <div class="product-name">中泰蓝月短债（007821）</div>
+                                <div class="product-name">中证500ETF（510500）</div>
                                 <div class="product-desc">
-                                    短期债券投资，流动性好，波动小
+                                    中盘成长股指数，均衡配置优选
                                 </div>
                             </div>
                             <div class="product-item">
-                                <div class="product-name">中泰货币市场基金（020031）</div>
+                                <div class="product-name">科创50ETF（588000）</div>
                                 <div class="product-desc">
-                                    现金管理工具，T+1快速赎回
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="business-card">
-                        <div class="business-card-header">
-                            <div class="business-card-title">
-                                🎯 FOF基金
-                            </div>
-                            <div class="business-card-subtitle">专业资产配置</div>
-                        </div>
-                        <div class="business-card-body">
-                            <div class="product-item">
-                                <div class="product-name">中泰稳健养老目标FOF（009291）</div>
-                                <div class="product-desc">
-                                    养老目标基金，稳健资产配置策略
+                                    科创板核心资产，科技创新龙头
                                 </div>
                             </div>
                             <div class="product-item">
-                                <div class="product-name">中泰星选FOF（013523）</div>
+                                <div class="product-name">创业板ETF（159915）</div>
                                 <div class="product-desc">
-                                    精选优质基金，专业FOF配置
+                                    创业板指数基金，成长股投资首选
+                                </div>
+                            </div>
+                            <div class="product-item">
+                                <div class="product-name">黄金ETF（518880）</div>
+                                <div class="product-desc">
+                                    黄金资产配置，避险保值工具
+                                </div>
+                            </div>
+                            <div class="product-item">
+                                <div class="product-name">纳斯达克100ETF（513100）</div>
+                                <div class="product-desc">
+                                    美股科技巨头，全球配置优选
                                 </div>
                             </div>
                         </div>
@@ -949,45 +1084,28 @@
                         </div>
                         <div class="business-card-body">
                             <div class="product-item">
-                                <div class="product-name">🎯 中泰星益5号FOF</div>
+                                <div class="product-name">🎯 启林专享中证1000增强9号</div>
                                 <div class="product-desc">
-                                    最低100万起投，锁定期12个月<br>
-                                    多策略配置，累计收益14.15%
+                                    最低100.5万起购<br>
+                                    中证1000指数增强策略<br>
+                                    量化多因子选股模型
                                 </div>
                             </div>
                             <div class="product-item">
-                                <div class="product-name">📈 中泰星河系列</div>
+                                <div class="product-name">📈 郝富泰选2号</div>
                                 <div class="product-desc">
-                                    星河16号、18号、20号等多个产品<br>
-                                    专业量化策略，追求绝对收益
+                                    专业量化策略<br>
+                                    追求绝对收益<br>
+                                    风险控制严格
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="business-card">
-                        <div class="business-card-header">
-                            <div class="business-card-title">
-                                💼 多策略私募产品
-                            </div>
-                            <div class="business-card-subtitle">60+只私募产品</div>
-                        </div>
-                        <div class="business-card-body">
                             <div class="product-item">
-                                <div class="product-name">📊 权益投资策略</div>
-                                <div class="product-desc">股票多头、股票多空、市场中性策略</div>
-                            </div>
-                            <div class="product-item">
-                                <div class="product-name">💰 固定收益策略</div>
-                                <div class="product-desc">债券投资、信用策略、套利策略</div>
-                            </div>
-                            <div class="product-item">
-                                <div class="product-name">🎯 对冲基金策略</div>
-                                <div class="product-desc">量化对冲、CTA策略、套利策略</div>
-                            </div>
-                            <div class="product-item">
-                                <div class="product-name">📦 FOF基金策略</div>
-                                <div class="product-desc">多策略配置，分散风险</div>
+                                <div class="product-name">🚀 量派中证1000量化多头36号</div>
+                                <div class="product-desc">
+                                    多因子模型+动量策略<br>
+                                    小市值股票捕捉<br>
+                                    追求超额收益
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1169,7 +1287,23 @@
     </div>
     
     <script>
-        function switchTab(tabName) {
+        // 检测是否为移动设备
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        // 防止快速连续点击
+        let isTabSwitching = false;
+        
+        function switchTab(event, tabName) {
+            // 防止快速连续点击
+            if (isTabSwitching) return;
+            isTabSwitching = true;
+            
+            // 处理事件
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
             // 移除所有active类
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
@@ -1179,9 +1313,88 @@
             });
             
             // 添加active类到当前选中的标签
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
+            let activeTab = null;
+            if (event && event.currentTarget) {
+                activeTab = event.currentTarget;
+            } else if (event && event.target) {
+                activeTab = event.target.closest('.nav-tab');
+            }
+            
+            if (activeTab) {
+                activeTab.classList.add('active');
+                
+                // 确保激活的标签在视口中可见（横向滚动）
+                if (isMobile) {
+                    const navTabs = document.querySelector('.nav-tabs');
+                    const tabRect = activeTab.getBoundingClientRect();
+                    const navRect = navTabs.getBoundingClientRect();
+                    
+                    if (tabRect.left < navRect.left || tabRect.right > navRect.right) {
+                        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    }
+                }
+            }
+            
+            // 显示对应内容
+            const targetContent = document.getElementById(tabName);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+            
+            // 移动端优化：滚动到内容区域
+            if (isMobile || window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const navTabs = document.querySelector('.nav-tabs');
+                    if (navTabs) {
+                        const navBottom = navTabs.getBoundingClientRect().bottom;
+                        const scrollTarget = window.pageYOffset + navBottom + 10;
+                        window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                    }
+                }, 100);
+            }
+            
+            // 重置防快速点击标志
+            setTimeout(() => {
+                isTabSwitching = false;
+            }, 300);
         }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保初始状态正确
+            const firstTab = document.querySelector('.nav-tab.active');
+            const firstContent = document.querySelector('.tab-content.active');
+            if (!firstTab) {
+                document.querySelector('.nav-tab').classList.add('active');
+            }
+            if (!firstContent) {
+                document.querySelector('.tab-content').classList.add('active');
+            }
+            
+            // 为移动设备添加特殊类
+            if (isMobile) {
+                document.body.classList.add('is-mobile');
+            }
+            
+            // 添加触摸反馈效果
+            if (isMobile) {
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    // 使用更明显的触摸反馈
+                    tab.addEventListener('touchstart', function() {
+                        if (!this.classList.contains('active')) {
+                            this.style.backgroundColor = '#f3f4f6';
+                        }
+                    }, { passive: true });
+                    
+                    tab.addEventListener('touchend', function() {
+                        if (!this.classList.contains('active')) {
+                            this.style.backgroundColor = '';
+                        }
+                    }, { passive: true });
+                });
+            }
+        });
     </script>
 </body>
 </html>
